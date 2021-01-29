@@ -11,6 +11,21 @@ simple model viewer.
 * OpenGL 3.3
 * [assimp](https://github.com/assimp/assimp)
 
+## Setup
+
+```bash
+git submodule update --init
+```
+
+## Build
+
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
+
 ## Externals
 
 * [glad](https://github.com/Dav1dde/glad)
