@@ -33,5 +33,11 @@ target_link_libraries(viewer PRIVATE glm)
 find_package(ASSIMP REQUIRED)
 target_link_libraries(viewer PRIVATE assimp)
 
+# imgui
+target_link_libraries(viewer PRIVATE imgui)
+
+# imgui_glfw_opengl3
+target_link_libraries(viewer PRIVATE imgui_glfw_opengl3)
+
 # copy shaders to build
 add_custom_command(TARGET viewer POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/shaders $<TARGET_FILE_DIR:viewer>/shaders COMMENT "copying shaders" VERBATIM)
