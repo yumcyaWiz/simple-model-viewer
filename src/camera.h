@@ -21,18 +21,23 @@ class Camera {
         camForward{0.0, 0.0, -1.0f},
         camRight{1.0f, 0.0f, 0.0f},
         camUp{0.0f, 1.0f, 0.0f},
+        fov(45.0f),
         movementSpeed(1.0f) {}
 
+  float getFOV() const { return fov; }
+  void setFOV(float fov) { this->fov = fov; }
   float getMovementSpeed() const { return movementSpeed; }
-  void setMovementSpeed(float speed) { movementSpeed = speed; }
+  void setMovementSpeed(float movementSpeed) {
+    this->movementSpeed = movementSpeed;
+  }
 
   glm::mat4 computeViewMatrix() const {
     return glm::lookAt(camPos, camPos + camForward, camUp);
   }
 
   glm::mat4 computeProjectionMatrix(int width, int height) const {
-    return glm::perspective(glm::radians(45.0f),
-                            static_cast<float>(width) / height, 0.1f, 100.0f);
+    return glm::perspective(glm::radians(fov),
+                            static_cast<float>(width) / height, 0.1f, 10000.0f);
   }
 
   // move camera
@@ -66,6 +71,7 @@ class Camera {
   glm::vec3 camRight;
   glm::vec3 camUp;
 
+  float fov;
   float movementSpeed;
 };
 

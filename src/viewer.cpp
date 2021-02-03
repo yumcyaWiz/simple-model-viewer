@@ -88,10 +88,10 @@ int main() {
   glEnable(GL_DEPTH_TEST);
 
   // setup shader
-  Shader shader("src/shaders/shader.vert", "src/shaders/shader.frag");
+  Shader shader("src/shaders/shader.vert", "src/shaders/position.frag");
 
   // load model
-  Model model("assets/sponza/sponza.obj");
+  Model model("assets/bunny/bunny.obj");
 
   // app loop
   while (!glfwWindowShouldClose(window)) {
@@ -103,10 +103,17 @@ int main() {
     ImGui::NewFrame();
 
     ImGui::Begin("viewer");
+
+    static float fov = camera.getFOV();
+    if (ImGui::InputFloat("FOV", &fov)) {
+      camera.setFOV(fov);
+    }
+
     static float movementSpeed = camera.getMovementSpeed();
     if (ImGui::InputFloat("Camera Movement Speed", &movementSpeed)) {
       camera.setMovementSpeed(movementSpeed);
     }
+
     ImGui::End();
 
     // handle input
