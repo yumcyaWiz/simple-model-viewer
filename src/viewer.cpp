@@ -37,7 +37,7 @@ int main() {
   Shader shader("src/shaders/shader.vert", "src/shaders/shader.frag");
 
   // load model
-  Model model("assets/teapot/teapot.obj");
+  Model model("assets/bunny/bunny.obj");
 
   // app loop
   while (!glfwWindowShouldClose(window)) {
