@@ -24,6 +24,11 @@ class Camera {
     return glm::lookAt(camPos, camPos + camForward, camUp);
   }
 
+  glm::mat4 computeProjectionMatrix(int width, int height) const {
+    return glm::perspective(glm::radians(45.0f),
+                            static_cast<float>(width) / height, 0.1f, 100.0f);
+  }
+
   // move camera
   void move(const CameraMovement& direction, float deltaTime) {
     float velocity = 10.0f * deltaTime;
