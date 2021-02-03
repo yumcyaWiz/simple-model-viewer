@@ -26,6 +26,12 @@ class Model {
     }
   }
 
+  void destroy() const {
+    for (std::size_t i = 0; i < meshes.size(); ++i) {
+      meshes[i].destroy();
+    }
+  }
+
  private:
   std::vector<Mesh> meshes;
 
@@ -43,6 +49,9 @@ class Model {
 
     // process scene graph
     processNode(scene->mRootNode, scene);
+
+    std::cout << "[Model] " << filepath << " loaded." << std::endl;
+    std::cout << "[Model] number of meshes: " << meshes.size() << std::endl;
   }
 
   void processNode(const aiNode* node, const aiScene* scene) {
@@ -52,7 +61,6 @@ class Model {
       meshes.push_back(processMesh(mesh, scene));
     }
 
-    // recurse for each of its children
     for (std::size_t i = 0; i < node->mNumChildren; i++) {
       processNode(node->mChildren[i], scene);
     }

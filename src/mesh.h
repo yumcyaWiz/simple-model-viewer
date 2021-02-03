@@ -23,6 +23,12 @@ class Mesh {
     setup();
   }
 
+  void destroy() const {
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &VAO);
+  }
+
   // draw mesh by given shader
   void draw(const Shader& shader) const {
     glBindVertexArray(VAO);
