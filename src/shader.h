@@ -84,6 +84,20 @@ class Shader {
       return;
     }
   }
+
+  void linkShader() {
+    // link shader program
+    program = glCreateProgram();
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+    glLinkProgram(program);
+    glDetachShader(program, vertexShader);
+    glDetachShader(program, fragmentShader);
+
+    // handle link error
+    int success = 0;
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+  }
 };
 
 #endif
