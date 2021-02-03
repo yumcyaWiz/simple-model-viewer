@@ -4,7 +4,7 @@
 #include "model.h"
 #include "shader.h"
 
-enum class RenderMode { Position, Normal };
+enum class RenderMode { Position, Normal, TexCoords };
 
 struct alignas(16) CameraBlock {
   alignas(64) glm::mat4 view;
@@ -18,7 +18,9 @@ class Renderer {
         height(height),
         renderMode(RenderMode::Normal),
         positionShader{"src/shaders/shader.vert", "src/shaders/position.frag"},
-        normalShader{"src/shaders/shader.vert", "src/shaders/normal.frag"} {
+        normalShader{"src/shaders/shader.vert", "src/shaders/normal.frag"},
+        texCoordsShader{"src/shaders/shader.vert",
+                        "src/shaders/texcoords.frag"} {
     // set view and projection matrix
     cameraBlock.view = camera.computeViewMatrix();
     cameraBlock.projection = camera.computeProjectionMatrix(width, height);
@@ -32,6 +34,7 @@ class Renderer {
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, cameraUBO);
     positionShader.setUBO("CameraBlock", 0);
     normalShader.setUBO("CameraBlock", 0);
+    texCoordsShader.setUBO("CameraBlock", 0);
   }
 
   void render() {
@@ -42,6 +45,9 @@ class Renderer {
         break;
       case RenderMode::Normal:
         model.draw(normalShader);
+        break;
+      case RenderMode::TexCoords:
+        model.draw(texCoordsShader);
         break;
     }
   }
@@ -109,6 +115,7 @@ class Renderer {
     model.destroy();
     positionShader.destroy();
     normalShader.destroy();
+    texCoordsShader.destroy();
   }
 
  private:
@@ -120,6 +127,7 @@ class Renderer {
 
   Shader positionShader;
   Shader normalShader;
+  Shader texCoordsShader;
 
   GLuint cameraUBO;
   CameraBlock cameraBlock;
