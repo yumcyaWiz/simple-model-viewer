@@ -4,6 +4,8 @@
 #include "model.h"
 #include "shader.h"
 
+enum class RenderMode { Position, Normal };
+
 struct alignas(16) CameraBlock {
   alignas(64) glm::mat4 view;
   alignas(64) glm::mat4 projection;
@@ -14,6 +16,7 @@ class Renderer {
   Renderer(int width, int height)
       : width(width),
         height(height),
+        renderMode(RenderMode::Normal),
         positionShader{"src/shaders/shader.vert", "src/shaders/position.frag"},
         normalShader{"src/shaders/shader.vert", "src/shaders/normal.frag"} {
     // set view and projection matrix
@@ -33,7 +36,14 @@ class Renderer {
 
   void render() {
     // render model
-    model.draw(normalShader);
+    switch (renderMode) {
+      case RenderMode::Position:
+        model.draw(positionShader);
+        break;
+      case RenderMode::Normal:
+        model.draw(normalShader);
+        break;
+    }
   }
 
   void loadModel(const std::string& filepath) {
@@ -52,6 +62,11 @@ class Renderer {
     // update projection matrix
     cameraBlock.projection = camera.computeProjectionMatrix(width, height);
     updateCameraUBO();
+  }
+
+  RenderMode getRenderMode() const { return renderMode; }
+  void setRenderMode(const RenderMode& renderMode) {
+    this->renderMode = renderMode;
   }
 
   float getCameraFOV() const { return camera.fov; }
@@ -86,6 +101,7 @@ class Renderer {
  private:
   int width;
   int height;
+  RenderMode renderMode;
   Camera camera;
   Model model;
 

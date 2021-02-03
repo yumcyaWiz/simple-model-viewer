@@ -107,6 +107,12 @@ int main() {
 
     ImGui::Begin("viewer");
 
+    static RenderMode renderMode = renderer->getRenderMode();
+    if (ImGui::Combo("Render Mode", reinterpret_cast<int*>(&renderMode),
+                     "Position\0Normal\0\0")) {
+      renderer->setRenderMode(renderMode);
+    }
+
     static float fov = renderer->getCameraFOV();
     if (ImGui::InputFloat("FOV", &fov)) {
       renderer->setCameraFOV(fov);
