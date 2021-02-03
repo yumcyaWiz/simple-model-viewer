@@ -31,18 +31,29 @@ int main() {
     return EXIT_FAILURE;
   }
 
+  glViewport(0, 0, 512, 512);
+
+  // setup shader
+  Shader shader("src/shaders/shader.vert", "src/shaders/shader.frag");
+
+  // load model
+  Model model("assets/teapot/teapot.obj");
+
   // app loop
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
 
     // rendering
     glClear(GL_COLOR_BUFFER_BIT);
+    model.draw(shader);
 
     // swap buffer
     glfwSwapBuffers(window);
   }
 
   // exit
+  model.destroy();
+  shader.destroy();
   glfwDestroyWindow(window);
   glfwTerminate();
 
