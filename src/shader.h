@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <variant>
 #include <vector>
 
 #include "glad/glad.h"
@@ -110,6 +111,81 @@ class Shader {
       glDeleteProgram(program);
       return;
     }
+  }
+
+ public:
+  Shader() {}
+
+  // load vertex shader and fragment shader from given filepath
+  Shader(const std::string& vertexShaderFilepath,
+         const std::string& fragmentShaderFilepath)
+      : vertexShaderFilepath(vertexShaderFilepath),
+        fragmentShaderFilepath(fragmentShaderFilepath) {
+    compileShader();
+    linkShader();
+  }
+
+  // delete shader
+  void destroy() {
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    glDeleteProgram(program);
+  }
+
+  // activate shader on the currect context
+  void activate() const { glUseProgram(program); }
+  // deactivate shader on the currect context
+  void deactivate() const { glUseProgram(0); }
+
+  void setUniform(const std::string& uniformName,
+                  const std::variant<GLint, GLuint, GLfloat, glm::vec2,
+                                     glm::vec3>& value) const {
+    activate();
+
+    // get location of uniform variable
+    const GLint location = glGetUniformLocation(program, uniformName.c_str());
+
+    // set value
+    struct Visitor {
+      GLint location;
+      Visitor(GLint location) : location(location) {}
+
+      void operator()(GLint value) { glUniform1i(location, value); }
+      void operator()(GLuint value) { glUniform1ui(location, value); }
+      void operator()(GLfloat value) { glUniform1f(location, value); }
+      void operator()(const glm::vec2& value) {
+        glUniform2fv(location, 1, glm::value_ptr(value));
+      }
+      void operator()(const glm::vec3& value) {
+        glUniform3fv(location, 1, glm::value_ptr(value));
+      }
+    };
+    std::visit(Visitor{location}, value);
+
+    deactivate();
+  }
+
+  void setUniformTexture(const std::string& uniformName, GLuint texture,
+                         GLuint textureUnitNumnber) const {
+    activate();
+
+    // bind texture to specified texture unit
+    glActiveTexture(GL_TEXTURE0 + textureUnitNumnber);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // set texture unit number on uniform variable
+    const GLint location = glGetUniformLocation(program, uniformName.c_str());
+    glUniform1i(location, textureUnitNumnber);
+
+    deactivate();
+  }
+
+  void setUBO(const std::string& blockName, GLuint bindingNumber) const {
+    const GLuint blockIndex =
+        glGetUniformBlockIndex(program, blockName.c_str());
+
+    // set binding number of specified block
+    glUniformBlockBinding(program, blockIndex, bindingNumber);
   }
 };
 
