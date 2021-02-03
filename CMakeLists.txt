@@ -32,3 +32,6 @@ target_link_libraries(viewer PRIVATE glm)
 # assimp
 find_package(ASSIMP REQUIRED)
 target_link_libraries(viewer PRIVATE assimp)
+
+# copy shaders to build
+add_custom_command(TARGET viewer POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/shaders $<TARGET_FILE_DIR:viewer>/shaders COMMENT "copying shaders" VERBATIM)

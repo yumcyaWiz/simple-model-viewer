@@ -31,6 +31,7 @@ int main() {
     return EXIT_FAILURE;
   }
 
+  // app loop
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
 
