@@ -50,8 +50,18 @@ class Model {
     // process scene graph
     processNode(scene->mRootNode, scene);
 
+    // show info
     std::cout << "[Model] " << filepath << " loaded." << std::endl;
     std::cout << "[Model] number of meshes: " << meshes.size() << std::endl;
+
+    unsigned int nVertices = 0;
+    unsigned int nFaces = 0;
+    for (std::size_t i = 0; i < meshes.size(); ++i) {
+      nVertices += meshes[i].vertices.size();
+      nFaces += meshes[i].indices.size() / 3;
+    }
+    std::cout << "[Model] number of vertices: " << nVertices << std::endl;
+    std::cout << "[Model] number of faces: " << nFaces << std::endl;
   }
 
   void processNode(const aiNode* node, const aiScene* scene) {
@@ -77,6 +87,7 @@ class Model {
                                   mesh->mVertices[i].z);
       vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y,
                                 mesh->mNormals[i].z);
+      vertices.push_back(vertex);
     }
 
     // indices
