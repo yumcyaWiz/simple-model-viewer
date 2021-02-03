@@ -3,6 +3,7 @@
 #include "glad/glad.h"
 //
 #include "GLFW/glfw3.h"
+#include "camera.h"
 #include "model.h"
 
 int main() {
@@ -33,15 +34,23 @@ int main() {
 
   glViewport(0, 0, 512, 512);
 
+  // setup camera
+  Camera camera;
+
   // setup shader
   Shader shader("src/shaders/shader.vert", "src/shaders/shader.frag");
 
   // load model
-  Model model("assets/bunny/bunny.obj");
+  Model model(
+      "assets/survival-guitar-backpack-low-poly/Survival_BackPack_2.fbx");
 
   // app loop
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
+
+    // set uniforms
+    shader.setUniform("view", camera.computeViewMatrix());
+    shader.setUniform("projection", camera.computeProjectionMatrix(512, 512));
 
     // rendering
     glClear(GL_COLOR_BUFFER_BIT);

@@ -138,7 +138,7 @@ class Shader {
 
   void setUniform(const std::string& uniformName,
                   const std::variant<GLint, GLuint, GLfloat, glm::vec2,
-                                     glm::vec3>& value) const {
+                                     glm::vec3, glm::mat4>& value) const {
     activate();
 
     // get location of uniform variable
@@ -157,6 +157,9 @@ class Shader {
       }
       void operator()(const glm::vec3& value) {
         glUniform3fv(location, 1, glm::value_ptr(value));
+      }
+      void operator()(const glm::mat4& value) {
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
       }
     };
     std::visit(Visitor{location}, value);
