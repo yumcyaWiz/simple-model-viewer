@@ -7,9 +7,9 @@
 #include "glm/glm.hpp"
 #include "shader.h"
 
-struct Vertex {
-  glm::vec3 position;  // vertex position
-  glm::vec3 normal;    // vertex normal
+struct alignas(16) Vertex {
+  alignas(16) glm::vec3 position;  // vertex position
+  alignas(16) glm::vec3 normal;    // vertex normal
 };
 
 class Mesh {

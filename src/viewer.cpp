@@ -105,6 +105,7 @@ int main() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
+    // imgui
     ImGui::Begin("viewer");
 
     static RenderMode renderMode = renderer->getRenderMode();
