@@ -6,6 +6,30 @@
 #include "camera.h"
 #include "model.h"
 
+// globals
+Camera camera;
+
+void handleInput(GLFWwindow* window) {
+  // close application
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, GLFW_TRUE);
+  }
+
+  // camera movement
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    camera.move(CameraMovement::FORWARD, 0.01f);
+  }
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    camera.move(CameraMovement::LEFT, 0.01f);
+  }
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    camera.move(CameraMovement::BACKWARD, 0.01f);
+  }
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    camera.move(CameraMovement::RIGHT, 0.01f);
+  }
+}
+
 int main() {
   // initialize glfw
   if (!glfwInit()) {
@@ -34,9 +58,6 @@ int main() {
 
   glViewport(0, 0, 512, 512);
 
-  // setup camera
-  Camera camera;
-
   // setup shader
   Shader shader("src/shaders/shader.vert", "src/shaders/shader.frag");
 
@@ -47,6 +68,9 @@ int main() {
   // app loop
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
+
+    // handle input
+    handleInput(window);
 
     // set uniforms
     shader.setUniform("view", camera.computeViewMatrix());
