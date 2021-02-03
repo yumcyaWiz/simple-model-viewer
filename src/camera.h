@@ -20,7 +20,11 @@ class Camera {
       : camPos{0.0f},
         camForward{0.0, 0.0, -1.0f},
         camRight{1.0f, 0.0f, 0.0f},
-        camUp{0.0f, 1.0f, 0.0f} {}
+        camUp{0.0f, 1.0f, 0.0f},
+        movementSpeed(1.0f) {}
+
+  float getMovementSpeed() const { return movementSpeed; }
+  void setMovementSpeed(float speed) { movementSpeed = speed; }
 
   glm::mat4 computeViewMatrix() const {
     return glm::lookAt(camPos, camPos + camForward, camUp);
@@ -33,7 +37,7 @@ class Camera {
 
   // move camera
   void move(const CameraMovement& direction, float deltaTime) {
-    float velocity = 10.0f * deltaTime;
+    const float velocity = movementSpeed * deltaTime;
     switch (direction) {
       case CameraMovement::FORWARD:
         camPos += velocity * camForward;
@@ -61,6 +65,8 @@ class Camera {
   glm::vec3 camForward;
   glm::vec3 camRight;
   glm::vec3 camUp;
+
+  float movementSpeed;
 };
 
 #endif

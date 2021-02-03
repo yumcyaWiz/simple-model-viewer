@@ -11,8 +11,8 @@
 #include "model.h"
 
 // globals
-unsigned int width = 512;
-unsigned int height = 512;
+unsigned int width = 1024;
+unsigned int height = 768;
 Camera camera;
 
 void handleInput(GLFWwindow* window, const ImGuiIO& io) {
@@ -36,7 +36,8 @@ void handleInput(GLFWwindow* window, const ImGuiIO& io) {
   }
 }
 
-void framebufferSizeCallback(GLFWwindow* window, int _width, int _height) {
+void framebufferSizeCallback([[maybe_unused]] GLFWwindow* window, int _width,
+                             int _height) {
   width = _width;
   height = _height;
   glViewport(0, 0, width, height);
@@ -90,7 +91,7 @@ int main() {
   Shader shader("src/shaders/shader.vert", "src/shaders/shader.frag");
 
   // load model
-  Model model("assets/bunny/bunny.obj");
+  Model model("assets/sponza/sponza.obj");
 
   // app loop
   while (!glfwWindowShouldClose(window)) {
@@ -102,6 +103,10 @@ int main() {
     ImGui::NewFrame();
 
     ImGui::Begin("viewer");
+    static float movementSpeed = camera.getMovementSpeed();
+    if (ImGui::InputFloat("Camera Movement Speed", &movementSpeed)) {
+      camera.setMovementSpeed(movementSpeed);
+    }
     ImGui::End();
 
     // handle input
