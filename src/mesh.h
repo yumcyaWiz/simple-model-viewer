@@ -10,6 +10,7 @@
 struct alignas(16) Vertex {
   alignas(16) glm::vec3 position;  // vertex position
   alignas(16) glm::vec3 normal;    // vertex normal
+  alignas(8) glm::vec2 texcoords;  // texture coordinates
 };
 
 class Mesh {
@@ -71,6 +72,11 @@ class Mesh {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                           reinterpret_cast<void*>(offsetof(Vertex, normal)));
+
+    // texcoords
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          reinterpret_cast<void*>(offsetof(Vertex, texcoords)));
 
     glBindVertexArray(0);
   }

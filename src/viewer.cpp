@@ -101,7 +101,7 @@ int main() {
   renderer = std::make_unique<Renderer>(width, height);
 
   // load model
-  renderer->loadModel("assets/bunny/bunny.obj");
+  renderer->loadModel("assets/sponza/sponza.obj");
 
   // app loop
   while (!glfwWindowShouldClose(window)) {

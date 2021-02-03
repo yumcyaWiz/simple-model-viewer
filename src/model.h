@@ -89,8 +89,21 @@ class Model {
       Vertex vertex;
       vertex.position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y,
                                   mesh->mVertices[i].z);
-      vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y,
-                                mesh->mNormals[i].z);
+
+      if (mesh->mNormals) {
+        vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y,
+                                  mesh->mNormals[i].z);
+      } else {
+        vertex.normal = glm::vec3(0.0f, 0.0f, 0.0f);
+      }
+
+      if (mesh->mTextureCoords[0]) {
+        vertex.texcoords = glm::vec2(mesh->mTextureCoords[0][i].x,
+                                     mesh->mTextureCoords[0][i].y);
+      } else {
+        vertex.texcoords = glm::vec2(0.0f, 0.0f);
+      }
+
       vertices.push_back(vertex);
     }
 
