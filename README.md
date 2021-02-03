@@ -32,3 +32,4 @@ make
 * [glm](https://github.com/g-truc/glm)
 * [GLFW](https://github.com/glfw/glfw)
 * [assimp](https://github.com/assimp/assimp)
+* [imgui](https://github.com/ocornut/imgui)
