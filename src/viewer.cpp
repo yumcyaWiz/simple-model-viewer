@@ -60,6 +60,9 @@ int main() {
     return EXIT_FAILURE;
   }
 
+  glEnable(GL_DEPTH_TEST);
+  glViewport(0, 0, 512, 512);
+
   // setup imgui
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -72,8 +75,6 @@ int main() {
   // setup imgui backends
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init("#version 330 core");
-
-  glViewport(0, 0, 512, 512);
 
   // setup shader
   Shader shader("src/shaders/shader.vert", "src/shaders/shader.frag");
@@ -102,7 +103,7 @@ int main() {
     shader.setUniform("projection", camera.computeProjectionMatrix(512, 512));
 
     // render
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     model.draw(shader);
 
     // render imgui
