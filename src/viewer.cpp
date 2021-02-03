@@ -36,6 +36,12 @@ void handleInput(GLFWwindow* window, const ImGuiIO& io) {
   }
 }
 
+void framebufferSizeCallback(GLFWwindow* window, int _width, int _height) {
+  width = _width;
+  height = _height;
+  glViewport(0, 0, width, height);
+}
+
 int main() {
   // initialize glfw
   if (!glfwInit()) {
@@ -55,6 +61,8 @@ int main() {
     return EXIT_FAILURE;
   }
   glfwMakeContextCurrent(window);
+
+  glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
   // initialize glad
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -101,7 +109,8 @@ int main() {
 
     // set uniforms
     shader.setUniform("view", camera.computeViewMatrix());
-    shader.setUniform("projection", camera.computeProjectionMatrix(512, 512));
+    shader.setUniform("projection",
+                      camera.computeProjectionMatrix(width, height));
 
     // render
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
