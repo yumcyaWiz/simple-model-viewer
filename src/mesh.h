@@ -71,7 +71,6 @@ class Mesh {
                           reinterpret_cast<void*>(offsetof(Vertex, normal)));
 
     glBindVertexArray(0);
-    std::cout << "setup" << std::endl;
   }
 };
 
