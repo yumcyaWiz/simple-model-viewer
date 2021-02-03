@@ -7,9 +7,11 @@
 
 enum class CameraMovement {
   FORWARD,
-  RIGHT,
   BACKWARD,
+  RIGHT,
   LEFT,
+  UP,
+  DOWN,
 };
 
 class Camera {
@@ -36,14 +38,20 @@ class Camera {
       case CameraMovement::FORWARD:
         camPos += velocity * camForward;
         break;
-      case CameraMovement::RIGHT:
-        camPos += velocity * camRight;
-        break;
       case CameraMovement::BACKWARD:
         camPos -= velocity * camForward;
         break;
+      case CameraMovement::RIGHT:
+        camPos += velocity * camRight;
+        break;
       case CameraMovement::LEFT:
         camPos -= velocity * camRight;
+        break;
+      case CameraMovement::UP:
+        camPos += velocity * camUp;
+        break;
+      case CameraMovement::DOWN:
+        camPos -= velocity * camUp;
         break;
     }
   }
