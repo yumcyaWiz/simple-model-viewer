@@ -43,6 +43,7 @@ void framebufferSizeCallback([[maybe_unused]] GLFWwindow* window, int _width,
   width = _width;
   height = _height;
   glViewport(0, 0, width, height);
+  renderer->setResolution(width, height);
 }
 
 int main() {
@@ -90,7 +91,7 @@ int main() {
   glEnable(GL_DEPTH_TEST);
 
   // setup renderer
-  renderer = std::make_unique<Renderer>();
+  renderer = std::make_unique<Renderer>(width, height);
 
   // load model
   renderer->loadModel("assets/bunny/bunny.obj");
@@ -123,7 +124,7 @@ int main() {
 
     // render
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderer->render(width, height);
+    renderer->render();
 
     // render imgui
     ImGui::Render();

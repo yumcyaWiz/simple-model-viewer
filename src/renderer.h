@@ -4,18 +4,34 @@
 #include "model.h"
 #include "shader.h"
 
+struct alignas(16) CameraBlock {
+  alignas(64) glm::mat4 view;
+  alignas(64) glm::mat4 projection;
+};
+
 class Renderer {
  public:
-  Renderer()
-      : positionShader{"src/shaders/shader.vert", "src/shaders/position.frag"},
-        normalShader{"src/shaders/shader.vert", "src/shaders/normal.frag"} {}
+  Renderer(int width, int height)
+      : width(width),
+        height(height),
+        positionShader{"src/shaders/shader.vert", "src/shaders/position.frag"},
+        normalShader{"src/shaders/shader.vert", "src/shaders/normal.frag"} {
+    // set view and projection matrix
+    cameraBlock.view = camera.computeViewMatrix();
+    cameraBlock.projection = camera.computeProjectionMatrix(width, height);
 
-  void render(int width, int height) const {
-    // set uniforms
-    normalShader.setUniform("view", camera.computeViewMatrix());
-    normalShader.setUniform("projection",
-                            camera.computeProjectionMatrix(width, height));
+    // setup camera UBO
+    glGenBuffers(1, &cameraUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraBlock), &cameraBlock,
+                 GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, cameraUBO);
+    positionShader.setUBO("CameraBlock", 0);
+    normalShader.setUBO("CameraBlock", 0);
+  }
 
+  void render() {
     // render model
     model.draw(normalShader);
   }
@@ -29,8 +45,23 @@ class Renderer {
     model.loadModel(filepath);
   }
 
+  void setResolution(int width, int height) {
+    this->width = width;
+    this->height = height;
+
+    // update projection matrix
+    cameraBlock.projection = camera.computeProjectionMatrix(width, height);
+    updateCameraUBO();
+  }
+
   float getCameraFOV() const { return camera.fov; }
-  void setCameraFOV(float fov) { camera.fov = fov; }
+  void setCameraFOV(float fov) {
+    camera.fov = fov;
+
+    // update projection matrix
+    cameraBlock.projection = camera.computeProjectionMatrix(width, height);
+    updateCameraUBO();
+  }
 
   float getCameraMovementSpeed() const { return camera.movementSpeed; }
   void setCameraMovementSpeed(float movementSpeed) {
@@ -39,19 +70,36 @@ class Renderer {
 
   void moveCamera(const CameraMovement& direction, float deltaTime) {
     camera.move(direction, deltaTime);
+
+    // update view matrix
+    cameraBlock.view = camera.computeViewMatrix();
+    updateCameraUBO();
   }
 
   void destroy() {
+    glDeleteBuffers(1, &cameraUBO);
     model.destroy();
     positionShader.destroy();
     normalShader.destroy();
   }
 
  private:
+  int width;
+  int height;
   Camera camera;
   Model model;
 
   Shader positionShader;
   Shader normalShader;
+
+  GLuint cameraUBO;
+  CameraBlock cameraBlock;
+
+  void updateCameraUBO() {
+    glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraBlock), &cameraBlock,
+                 GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  }
 };
 #endif

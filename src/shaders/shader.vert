@@ -5,8 +5,10 @@ layout (location = 1) in vec3 vNormal;
 out vec3 position;
 out vec3 normal;
 
-uniform mat4 view;
-uniform mat4 projection;
+layout(std140) uniform CameraBlock {
+  mat4 view;
+  mat4 projection;
+};
 
 void main() {
   gl_Position = projection * view * vec4(vPosition, 1.0);
