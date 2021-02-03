@@ -3,7 +3,7 @@
 #include "glad/glad.h"
 //
 #include "GLFW/glfw3.h"
-#include "shader.h"
+#include "model.h"
 
 int main() {
   // initialize glfw
