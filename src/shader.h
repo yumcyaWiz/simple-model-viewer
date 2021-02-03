@@ -44,7 +44,7 @@ class Shader {
     glCompileShader(vertexShader);
 
     // handle compilation error
-    GLuint success = 0;
+    GLint success = 0;
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
       std::cerr << "failed to compile vertex shader" << std::endl;
