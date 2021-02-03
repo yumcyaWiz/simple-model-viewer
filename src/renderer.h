@@ -91,6 +91,11 @@ class Renderer {
     updateCameraUBO();
   }
 
+  float getCameraLookAroundSpeed() const { return camera.lookAroundSpeed; }
+  void setCameraLookAroundSpeed(float lookAroundSpeed) {
+    camera.lookAroundSpeed = lookAroundSpeed;
+  }
+
   void lookAroundCamera(float dPhi, float dTheta) {
     camera.lookAround(dPhi, dTheta);
 

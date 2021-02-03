@@ -127,8 +127,13 @@ int main() {
     }
 
     static float movementSpeed = renderer->getCameraMovementSpeed();
-    if (ImGui::InputFloat("Camera Movement Speed", &movementSpeed)) {
+    if (ImGui::InputFloat("Movement Speed", &movementSpeed)) {
       renderer->setCameraMovementSpeed(movementSpeed);
+    }
+
+    static float lookAroundSpeed = renderer->getCameraLookAroundSpeed();
+    if (ImGui::InputFloat("Look Around Speed", &lookAroundSpeed)) {
+      renderer->setCameraLookAroundSpeed(lookAroundSpeed);
     }
 
     ImGui::End();
