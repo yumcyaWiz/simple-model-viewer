@@ -97,6 +97,19 @@ class Shader {
     // handle link error
     int success = 0;
     glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if (success == GL_FALSE) {
+      std::cerr << "failed to link shaders" << std::endl;
+
+      GLint logSize = 0;
+      glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logSize);
+      std::vector<GLchar> errorLog(logSize);
+      glGetProgramInfoLog(program, logSize, &logSize, &errorLog[0]);
+      std::string errorLogStr(errorLog.begin(), errorLog.end());
+      std::cerr << errorLogStr << std::endl;
+
+      glDeleteProgram(program);
+      return;
+    }
   }
 };
 
