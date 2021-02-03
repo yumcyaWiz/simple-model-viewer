@@ -36,6 +36,13 @@ void handleInput(GLFWwindow* window, const ImGuiIO& io) {
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
     renderer->moveCamera(CameraMovement::RIGHT, io.DeltaTime);
   }
+
+  // camera look around
+  if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+    const float orbitSpeed = 1.0f;
+    renderer->lookAroundCamera(orbitSpeed * io.MouseDelta.x,
+                               orbitSpeed * io.MouseDelta.y);
+  }
 }
 
 void framebufferSizeCallback([[maybe_unused]] GLFWwindow* window, int _width,

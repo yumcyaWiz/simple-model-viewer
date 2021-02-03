@@ -91,6 +91,14 @@ class Renderer {
     updateCameraUBO();
   }
 
+  void lookAroundCamera(float dPhi, float dTheta) {
+    camera.lookAround(dPhi, dTheta);
+
+    // update view matrix
+    cameraBlock.view = camera.computeViewMatrix();
+    updateCameraUBO();
+  }
+
   void destroy() {
     glDeleteBuffers(1, &cameraUBO);
     model.destroy();
