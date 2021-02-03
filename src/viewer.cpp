@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 //
 #include "glad/glad.h"
 //
@@ -9,11 +10,12 @@
 //
 #include "camera.h"
 #include "model.h"
+#include "renderer.h"
 
 // globals
-unsigned int width = 1024;
-unsigned int height = 768;
-Camera camera;
+int width = 1024;
+int height = 768;
+std::unique_ptr<Renderer> renderer;
 
 void handleInput(GLFWwindow* window, const ImGuiIO& io) {
   // close application
@@ -23,16 +25,16 @@ void handleInput(GLFWwindow* window, const ImGuiIO& io) {
 
   // camera movement
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-    camera.move(CameraMovement::FORWARD, io.DeltaTime);
+    renderer->moveCamera(CameraMovement::FORWARD, io.DeltaTime);
   }
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-    camera.move(CameraMovement::LEFT, io.DeltaTime);
+    renderer->moveCamera(CameraMovement::LEFT, io.DeltaTime);
   }
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-    camera.move(CameraMovement::BACKWARD, io.DeltaTime);
+    renderer->moveCamera(CameraMovement::BACKWARD, io.DeltaTime);
   }
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-    camera.move(CameraMovement::RIGHT, io.DeltaTime);
+    renderer->moveCamera(CameraMovement::RIGHT, io.DeltaTime);
   }
 }
 
@@ -87,11 +89,11 @@ int main() {
   // enable depth test
   glEnable(GL_DEPTH_TEST);
 
-  // setup shader
-  Shader shader("src/shaders/shader.vert", "src/shaders/position.frag");
+  // setup renderer
+  renderer = std::make_unique<Renderer>();
 
   // load model
-  Model model("assets/bunny/bunny.obj");
+  renderer->loadModel("assets/bunny/bunny.obj");
 
   // app loop
   while (!glfwWindowShouldClose(window)) {
@@ -104,14 +106,14 @@ int main() {
 
     ImGui::Begin("viewer");
 
-    static float fov = camera.getFOV();
+    static float fov = renderer->getCameraFOV();
     if (ImGui::InputFloat("FOV", &fov)) {
-      camera.setFOV(fov);
+      renderer->setCameraFOV(fov);
     }
 
-    static float movementSpeed = camera.getMovementSpeed();
+    static float movementSpeed = renderer->getCameraMovementSpeed();
     if (ImGui::InputFloat("Camera Movement Speed", &movementSpeed)) {
-      camera.setMovementSpeed(movementSpeed);
+      renderer->setCameraMovementSpeed(movementSpeed);
     }
 
     ImGui::End();
@@ -119,14 +121,9 @@ int main() {
     // handle input
     handleInput(window, io);
 
-    // set uniforms
-    shader.setUniform("view", camera.computeViewMatrix());
-    shader.setUniform("projection",
-                      camera.computeProjectionMatrix(width, height));
-
     // render
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    model.draw(shader);
+    renderer->render(width, height);
 
     // render imgui
     ImGui::Render();
@@ -137,8 +134,7 @@ int main() {
   }
 
   // exit
-  model.destroy();
-  shader.destroy();
+  renderer->destroy();
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();

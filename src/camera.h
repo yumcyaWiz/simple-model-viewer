@@ -16,6 +16,14 @@ enum class CameraMovement {
 
 class Camera {
  public:
+  glm::vec3 camPos;
+  glm::vec3 camForward;
+  glm::vec3 camRight;
+  glm::vec3 camUp;
+
+  float fov;
+  float movementSpeed;
+
   Camera()
       : camPos{0.0f},
         camForward{0.0, 0.0, -1.0f},
@@ -23,13 +31,6 @@ class Camera {
         camUp{0.0f, 1.0f, 0.0f},
         fov(45.0f),
         movementSpeed(1.0f) {}
-
-  float getFOV() const { return fov; }
-  void setFOV(float fov) { this->fov = fov; }
-  float getMovementSpeed() const { return movementSpeed; }
-  void setMovementSpeed(float movementSpeed) {
-    this->movementSpeed = movementSpeed;
-  }
 
   glm::mat4 computeViewMatrix() const {
     return glm::lookAt(camPos, camPos + camForward, camUp);
@@ -64,15 +65,6 @@ class Camera {
         break;
     }
   }
-
- private:
-  glm::vec3 camPos;
-  glm::vec3 camForward;
-  glm::vec3 camRight;
-  glm::vec3 camUp;
-
-  float fov;
-  float movementSpeed;
 };
 
 #endif

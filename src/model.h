@@ -17,23 +17,10 @@
 
 class Model {
  public:
+  Model() {}
   Model(const std::string& filepath) { loadModel(filepath); }
 
-  // draw model by given shader
-  void draw(const Shader& shader) const {
-    for (std::size_t i = 0; i < meshes.size(); i++) {
-      meshes[i].draw(shader);
-    }
-  }
-
-  void destroy() const {
-    for (std::size_t i = 0; i < meshes.size(); ++i) {
-      meshes[i].destroy();
-    }
-  }
-
- private:
-  std::vector<Mesh> meshes;
+  operator bool() const { return meshes.size() > 0; }
 
   void loadModel(const std::string& filepath) {
     // load model with assimp
@@ -63,6 +50,23 @@ class Model {
     std::cout << "[Model] number of vertices: " << nVertices << std::endl;
     std::cout << "[Model] number of faces: " << nFaces << std::endl;
   }
+
+  // draw model by given shader
+  void draw(const Shader& shader) const {
+    for (std::size_t i = 0; i < meshes.size(); i++) {
+      meshes[i].draw(shader);
+    }
+  }
+
+  void destroy() {
+    for (std::size_t i = 0; i < meshes.size(); ++i) {
+      meshes[i].destroy();
+    }
+    meshes.clear();
+  }
+
+ private:
+  std::vector<Mesh> meshes;
 
   void processNode(const aiNode* node, const aiScene* scene) {
     // process all the node's meshes

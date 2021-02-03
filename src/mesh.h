@@ -23,10 +23,12 @@ class Mesh {
     setup();
   }
 
-  void destroy() const {
+  void destroy() {
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
     glDeleteVertexArrays(1, &VAO);
+    vertices.clear();
+    indices.clear();
   }
 
   // draw mesh by given shader
