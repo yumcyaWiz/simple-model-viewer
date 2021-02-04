@@ -86,14 +86,13 @@ class Mesh {
     shader.setUniform("ka", material.ka);
     shader.setUniform("shininess", material.shininess);
 
-    // setup textures
+    // set texture uniform
     std::size_t n_diffuse = 0;
     std::size_t n_specular = 0;
     for (std::size_t i = 0; i < indicesOfTextures.size(); ++i) {
       const Texture& texture = textures[indicesOfTextures[i]];
       const int textureUnitNumber = i;
 
-      // set texture uniform
       switch (texture.textureType) {
         case TextureType::DIFFUSE: {
           const std::string uniformName =
@@ -111,6 +110,8 @@ class Mesh {
         }
       }
     }
+    shader.setUniform("hasDiffuseTextures", n_diffuse > 0);
+    shader.setUniform("hasSpecularTextures", n_specular > 0);
 
     // draw mesh
     glBindVertexArray(VAO);

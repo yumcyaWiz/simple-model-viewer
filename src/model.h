@@ -136,9 +136,8 @@ class Model {
     if (scene->mMaterials[mesh->mMaterialIndex]) {
       aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 
-      aiColor3D color;
-
       // kd
+      aiColor3D color;
       mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
       material.kd = glm::vec3(color.r, color.g, color.b);
 
