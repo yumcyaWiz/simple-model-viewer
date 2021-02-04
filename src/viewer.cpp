@@ -13,8 +13,8 @@
 #include "renderer.h"
 
 // globals
-int width = 1024;
-int height = 768;
+int width = 1600;
+int height = 900;
 std::unique_ptr<Renderer> renderer;
 
 void handleInput(GLFWwindow* window, const ImGuiIO& io) {

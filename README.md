@@ -1,6 +1,6 @@
 # simple-model-viewer
 
-![](./sponza-albedo.jpg)
+![](./img/diffuse.jpg)
 
 simple model viewer.
 
@@ -32,6 +32,28 @@ cd build
 cmake ..
 make
 ```
+
+## Gallery
+
+### Position Rendering
+
+![](./img/position.jpg)
+
+### Normal Rendering
+
+![](./img/normal.jpg)
+
+### Texture Coordinates Rendering
+
+![](./img/texcoords.jpg)
+
+### Diffuse Rendering
+
+![](./img/diffuse.jpg)
+
+### Specular Rendering
+
+![](./img/specular.jpg)
 
 ## Externals
 
