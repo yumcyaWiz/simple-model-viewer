@@ -30,7 +30,8 @@ class Model {
     // load model with assimp
     Assimp::Importer importer;
     const aiScene* scene =
-        importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_FlipUVs);
+        importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_FlipUVs |
+                                        aiProcess_GenNormals);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
         !scene->mRootNode) {
