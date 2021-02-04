@@ -9,7 +9,8 @@ simple model viewer.
 * Position Rendering
 * Normal Rendering
 * Texture Coordinates Rendering
-* Albedo Rendering
+* Diffuse Rendering
+* Specular Rendering
 
 ## Requirements
 
@@ -63,3 +64,4 @@ make
 * [assimp](https://github.com/assimp/assimp)
 * [imgui](https://github.com/ocornut/imgui)
 * [stb](https://github.com/nothings/stb)
+* [McGuire Computer Graphics Archive](https://casual-effects.com/data/)
