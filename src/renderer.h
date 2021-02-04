@@ -4,7 +4,7 @@
 #include "model.h"
 #include "shader.h"
 
-enum class RenderMode { Position, Normal, TexCoords };
+enum class RenderMode { Position, Normal, TexCoords, UVTest };
 
 struct alignas(16) CameraBlock {
   alignas(64) glm::mat4 view;
@@ -20,7 +20,8 @@ class Renderer {
         positionShader{"src/shaders/shader.vert", "src/shaders/position.frag"},
         normalShader{"src/shaders/shader.vert", "src/shaders/normal.frag"},
         texCoordsShader{"src/shaders/shader.vert",
-                        "src/shaders/texcoords.frag"} {
+                        "src/shaders/texcoords.frag"},
+        uvTestShader{"src/shaders/shader.vert", "src/shaders/uvtest.frag"} {
     // set view and projection matrix
     cameraBlock.view = camera.computeViewMatrix();
     cameraBlock.projection = camera.computeProjectionMatrix(width, height);
@@ -35,6 +36,16 @@ class Renderer {
     positionShader.setUBO("CameraBlock", 0);
     normalShader.setUBO("CameraBlock", 0);
     texCoordsShader.setUBO("CameraBlock", 0);
+
+    // setup test texture
+    glGenTextures(1, &testTexture);
+    glBindTexture(GL_TEXTURE_2D, testTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32UI, 1024, 1024, 0, GL_RGB, GL_FLOAT,
+                 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    uvTestShader.setUniformTexture("testTexture", testTexture, 0);
   }
 
   void render() {
@@ -48,6 +59,9 @@ class Renderer {
         break;
       case RenderMode::TexCoords:
         model.draw(texCoordsShader);
+        break;
+      case RenderMode::UVTest:
+        model.draw(uvTestShader);
         break;
     }
   }
@@ -112,10 +126,12 @@ class Renderer {
 
   void destroy() {
     glDeleteBuffers(1, &cameraUBO);
+    glDeleteTextures(1, &testTexture);
     model.destroy();
     positionShader.destroy();
     normalShader.destroy();
     texCoordsShader.destroy();
+    uvTestShader.destroy();
   }
 
  private:
@@ -128,9 +144,12 @@ class Renderer {
   Shader positionShader;
   Shader normalShader;
   Shader texCoordsShader;
+  Shader uvTestShader;
 
   GLuint cameraUBO;
   CameraBlock cameraBlock;
+
+  GLuint testTexture;
 
   void updateCameraUBO() {
     glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);

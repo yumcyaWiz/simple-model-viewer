@@ -38,7 +38,7 @@ void handleInput(GLFWwindow* window, const ImGuiIO& io) {
   }
 
   // camera look around
-  if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+  if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
     const float orbitSpeed = 1.0f;
     renderer->lookAroundCamera(orbitSpeed * io.MouseDelta.x,
                                orbitSpeed * io.MouseDelta.y);
@@ -117,7 +117,7 @@ int main() {
 
     static RenderMode renderMode = renderer->getRenderMode();
     if (ImGui::Combo("Render Mode", reinterpret_cast<int*>(&renderMode),
-                     "Position\0Normal\0TexCoords\0\0")) {
+                     "Position\0Normal\0TexCoords\0UVTest\0\0")) {
       renderer->setRenderMode(renderMode);
     }
 

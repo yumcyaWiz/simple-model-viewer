@@ -15,6 +15,8 @@
 //
 #include "mesh.h"
 
+struct Texture {};
+
 class Model {
  public:
   Model() {}
