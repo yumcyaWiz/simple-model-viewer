@@ -1,5 +1,6 @@
 #ifndef _MODEL_H
 #define _MODEL_H
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -35,7 +36,8 @@ class Model {
     }
 
     // process scene graph
-    processNode(scene->mRootNode, scene);
+    const std::filesystem::path ps(filepath);
+    processNode(scene->mRootNode, scene, ps.parent_path());
 
     // show info
     std::cout << "[Model] " << filepath << " loaded." << std::endl;
@@ -68,21 +70,24 @@ class Model {
  private:
   std::vector<Mesh> meshes;
 
-  void processNode(const aiNode* node, const aiScene* scene) {
+  void processNode(const aiNode* node, const aiScene* scene,
+                   const std::string& parentPath) {
     // process all the node's meshes
     for (std::size_t i = 0; i < node->mNumMeshes; ++i) {
       const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-      meshes.push_back(processMesh(mesh, scene));
+      meshes.push_back(processMesh(mesh, scene, parentPath));
     }
 
     for (std::size_t i = 0; i < node->mNumChildren; i++) {
-      processNode(node->mChildren[i], scene);
+      processNode(node->mChildren[i], scene, parentPath);
     }
   }
 
-  Mesh processMesh(const aiMesh* mesh, const aiScene* scene) {
+  Mesh processMesh(const aiMesh* mesh, const aiScene* scene,
+                   const std::string& parentPath) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+    std::vector<Texture> textures;
 
     // vertices
     for (std::size_t i = 0; i < mesh->mNumVertices; ++i) {
@@ -115,7 +120,36 @@ class Model {
       }
     }
 
-    return Mesh(vertices, indices);
+    // materials
+    if (scene->mMaterials[mesh->mMaterialIndex]) {
+      aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+      const std::filesystem::path psParent(parentPath);
+
+      // diffuse textures
+      for (std::size_t i = 0;
+           i < material->GetTextureCount(aiTextureType_DIFFUSE); ++i) {
+        aiString str;
+        material->GetTexture(aiTextureType_DIFFUSE, i, &str);
+        const std::filesystem::path ps(str.C_Str());
+        const std::string texturePath = (psParent / ps).native();
+
+        textures.emplace_back(texturePath, TextureType::DIFFUSE);
+      }
+
+      // specular textures
+      for (std::size_t i = 0;
+           i < material->GetTextureCount(aiTextureType_SPECULAR); ++i) {
+        aiString str;
+        material->GetTexture(aiTextureType_SPECULAR, i, &str);
+        const std::filesystem::path ps(str.C_Str());
+        const std::string texturePath = (psParent / ps).native();
+
+        textures.emplace_back(texturePath, TextureType::SPECULAR);
+      }
+    }
+
+    return Mesh(vertices, indices, textures);
   }
 };
 

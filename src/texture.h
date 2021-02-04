@@ -5,9 +5,15 @@
 #include "glad/glad.h"
 #include "stb_image.h"
 
+enum class TextureType {
+  DIFFUSE,
+  SPECULAR,
+};
+
 class Texture {
  public:
   GLuint id;
+  TextureType textureType;
 
   Texture() {
     glGenTextures(1, &id);
@@ -16,14 +22,24 @@ class Texture {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
   }
-  Texture(const std::string& filepath) : Texture() { loadImage(filepath); }
-  ~Texture() { glDeleteTextures(1, &id); }
+  Texture(const std::string& filepath, const TextureType& textureType)
+      : Texture() {
+    loadImage(filepath);
+    setTextureType(textureType);
+  }
+
+  void destroy() { glDeleteTextures(1, &id); }
 
   void loadImage(const std::string& filepath) const {
     // load image
     int width, height, channels;
     unsigned char* image =
         stbi_load(filepath.c_str(), &width, &height, &channels, 3);
+
+    if (!image) {
+      std::cerr << "failed to open " << filepath << std::endl;
+      return;
+    }
 
     // send image to texture
     glBindTexture(GL_TEXTURE_2D, id);
@@ -33,6 +49,8 @@ class Texture {
 
     stbi_image_free(image);
   }
+
+  void setTextureType(const TextureType& type) { this->textureType = type; }
 };
 
 #endif

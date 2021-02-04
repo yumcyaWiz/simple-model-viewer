@@ -5,7 +5,7 @@
 #include "shader.h"
 #include "texture.h"
 
-enum class RenderMode { Position, Normal, TexCoords, UVTest };
+enum class RenderMode { Position, Normal, TexCoords, Albedo };
 
 struct alignas(16) CameraBlock {
   alignas(64) glm::mat4 view;
@@ -22,8 +22,7 @@ class Renderer {
         normalShader{"src/shaders/shader.vert", "src/shaders/normal.frag"},
         texCoordsShader{"src/shaders/shader.vert",
                         "src/shaders/texcoords.frag"},
-        uvTestShader{"src/shaders/shader.vert", "src/shaders/uvtest.frag"},
-        testTexture("assets/uv_test.png") {
+        albedoShader{"src/shaders/shader.vert", "src/shaders/albedo.frag"} {
     // set view and projection matrix
     cameraBlock.view = camera.computeViewMatrix();
     cameraBlock.projection = camera.computeProjectionMatrix(width, height);
@@ -38,8 +37,7 @@ class Renderer {
     positionShader.setUBO("CameraBlock", 0);
     normalShader.setUBO("CameraBlock", 0);
     texCoordsShader.setUBO("CameraBlock", 0);
-
-    uvTestShader.setUniformTexture("testTexture", testTexture.id, 0);
+    albedoShader.setUBO("CameraBlock", 0);
   }
 
   void render() {
@@ -54,8 +52,8 @@ class Renderer {
       case RenderMode::TexCoords:
         model.draw(texCoordsShader);
         break;
-      case RenderMode::UVTest:
-        model.draw(uvTestShader);
+      case RenderMode::Albedo:
+        model.draw(albedoShader);
         break;
     }
   }
@@ -124,7 +122,7 @@ class Renderer {
     positionShader.destroy();
     normalShader.destroy();
     texCoordsShader.destroy();
-    uvTestShader.destroy();
+    albedoShader.destroy();
   }
 
  private:
@@ -137,12 +135,10 @@ class Renderer {
   Shader positionShader;
   Shader normalShader;
   Shader texCoordsShader;
-  Shader uvTestShader;
+  Shader albedoShader;
 
   GLuint cameraUBO;
   CameraBlock cameraBlock;
-
-  Texture testTexture;
 
   void updateCameraUBO() {
     glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);

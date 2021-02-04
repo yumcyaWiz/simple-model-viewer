@@ -6,6 +6,7 @@
 #include "glad/glad.h"
 #include "glm/glm.hpp"
 #include "shader.h"
+#include "texture.h"
 
 struct alignas(16) Vertex {
   alignas(16) glm::vec3 position;  // vertex position
@@ -17,10 +18,12 @@ class Mesh {
  public:
   std::vector<Vertex> vertices;
   std::vector<unsigned int> indices;
+  std::vector<Texture> textures;
 
   Mesh(const std::vector<Vertex>& vertices,
-       const std::vector<unsigned int>& indices)
-      : vertices(vertices), indices(indices) {
+       const std::vector<unsigned int>& indices,
+       const std::vector<Texture>& textures)
+      : vertices(vertices), indices(indices), textures(textures) {
     setup();
   }
 
@@ -30,10 +33,42 @@ class Mesh {
     glDeleteVertexArrays(1, &VAO);
     vertices.clear();
     indices.clear();
+
+    for (auto& texture : textures) {
+      texture.destroy();
+    }
+    textures.clear();
   }
 
   // draw mesh by given shader
   void draw(const Shader& shader) const {
+    // setup textures
+    std::size_t n_diffuse = 0;
+    std::size_t n_specular = 0;
+    for (std::size_t i = 0; i < textures.size(); ++i) {
+      const Texture& texture = textures[i];
+      const int textureUnitNumber = i;
+
+      // set texture uniform
+      switch (texture.textureType) {
+        case TextureType::DIFFUSE: {
+          const std::string uniformName =
+              "diffuseTextures[" + std::to_string(n_diffuse) + "]";
+          shader.setUniformTexture(uniformName, texture.id, textureUnitNumber);
+          n_diffuse++;
+          break;
+        }
+        case TextureType::SPECULAR: {
+          const std::string uniformName =
+              "specularTextures[" + std::to_string(n_specular) + "]";
+          shader.setUniformTexture(uniformName, texture.id, textureUnitNumber);
+          n_specular++;
+          break;
+        }
+      }
+    }
+
+    // draw mesh
     glBindVertexArray(VAO);
     shader.activate();
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
