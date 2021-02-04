@@ -5,7 +5,7 @@
 #include "shader.h"
 #include "texture.h"
 
-enum class RenderMode { Position, Normal, TexCoords, Albedo };
+enum class RenderMode { Position, Normal, TexCoords, Diffuse };
 
 struct alignas(16) CameraBlock {
   alignas(64) glm::mat4 view;
@@ -22,7 +22,7 @@ class Renderer {
         normalShader{"src/shaders/shader.vert", "src/shaders/normal.frag"},
         texCoordsShader{"src/shaders/shader.vert",
                         "src/shaders/texcoords.frag"},
-        albedoShader{"src/shaders/shader.vert", "src/shaders/albedo.frag"} {
+        diffuseShader{"src/shaders/shader.vert", "src/shaders/diffuse.frag"} {
     // set view and projection matrix
     cameraBlock.view = camera.computeViewMatrix();
     cameraBlock.projection = camera.computeProjectionMatrix(width, height);
@@ -37,7 +37,7 @@ class Renderer {
     positionShader.setUBO("CameraBlock", 0);
     normalShader.setUBO("CameraBlock", 0);
     texCoordsShader.setUBO("CameraBlock", 0);
-    albedoShader.setUBO("CameraBlock", 0);
+    diffuseShader.setUBO("CameraBlock", 0);
   }
 
   void render() {
@@ -52,8 +52,8 @@ class Renderer {
       case RenderMode::TexCoords:
         model.draw(texCoordsShader);
         break;
-      case RenderMode::Albedo:
-        model.draw(albedoShader);
+      case RenderMode::Diffuse:
+        model.draw(diffuseShader);
         break;
     }
   }
@@ -124,7 +124,7 @@ class Renderer {
     positionShader.destroy();
     normalShader.destroy();
     texCoordsShader.destroy();
-    albedoShader.destroy();
+    diffuseShader.destroy();
   }
 
  private:
@@ -137,7 +137,7 @@ class Renderer {
   Shader positionShader;
   Shader normalShader;
   Shader texCoordsShader;
-  Shader albedoShader;
+  Shader diffuseShader;
 
   GLuint cameraUBO;
   CameraBlock cameraBlock;
