@@ -191,7 +191,7 @@ class Model {
           indicesOfTextures.push_back(textures.size());
 
           // load texture
-          textures.emplace_back(texturePath, TextureType::DIFFUSE);
+          textures.emplace_back(texturePath, TextureType::SPECULAR);
         }
       }
     }
