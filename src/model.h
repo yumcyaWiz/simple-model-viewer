@@ -65,10 +65,15 @@ class Model {
   }
 
   void destroy() {
-    for (std::size_t i = 0; i < meshes.size(); ++i) {
-      meshes[i].destroy();
+    for (auto& mesh : meshes) {
+      mesh.destroy();
     }
     meshes.clear();
+    
+    for(auto& texture : textures) {
+      texture.destroy();
+    }
+    textures.clear();
   }
 
  private:
