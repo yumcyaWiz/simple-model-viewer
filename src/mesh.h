@@ -14,17 +14,26 @@ struct alignas(16) Vertex {
   alignas(8) glm::vec2 texcoords;  // texture coordinates
 };
 
+struct alignas(16) Material {
+  alignas(16) glm::vec3 kd;  // diffuse color
+  alignas(16) glm::vec3 ks;  // specular color
+  alignas(16) glm::vec3 ka;  // ambient color
+  alignas(4) float shininess;
+};
+
 class Mesh {
  public:
   std::vector<Vertex> vertices;
   std::vector<unsigned int> indices;
+  Material material;
   std::vector<unsigned int> indicesOfTextures;  // indices of textures
 
   Mesh(const std::vector<Vertex>& vertices,
-       const std::vector<unsigned int>& indices,
+       const std::vector<unsigned int>& indices, const Material& material,
        const std::vector<unsigned int>& indicesOfTextures)
       : vertices(vertices),
         indices(indices),
+        material(material),
         indicesOfTextures(indicesOfTextures) {
     // setup VBO, EBO, VAO
     glGenVertexArrays(1, &VAO);
@@ -71,6 +80,12 @@ class Mesh {
 
   // draw mesh by given shader
   void draw(const Shader& shader, const std::vector<Texture>& textures) const {
+    // set material
+    shader.setUniform("kd", material.kd);
+    shader.setUniform("ks", material.ks);
+    shader.setUniform("ka", material.ka);
+    shader.setUniform("shininess", material.shininess);
+
     // setup textures
     std::size_t n_diffuse = 0;
     std::size_t n_specular = 0;
@@ -103,6 +118,14 @@ class Mesh {
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     shader.deactivate();
     glBindVertexArray(0);
+
+    // reset texture uniform
+    for (int i = 0; i < 100; ++i) {
+      std::string uniformName = "diffuseTextures[" + std::to_string(i) + "]";
+      shader.setUniformTexture(uniformName, 0, 0);
+      uniformName = "specularTextures[" + std::to_string(i) + "]";
+      shader.setUniformTexture(uniformName, 0, 0);
+    }
   }
 
  private:

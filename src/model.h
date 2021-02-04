@@ -98,6 +98,7 @@ class Model {
                    const std::string& parentPath) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+    Material material;
     std::vector<unsigned int> indicesOfTextures;
 
     // vertices
@@ -133,15 +134,31 @@ class Model {
 
     // materials
     if (scene->mMaterials[mesh->mMaterialIndex]) {
-      aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+      aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 
-      const std::filesystem::path psParent(parentPath);
+      aiColor3D color;
+
+      // kd
+      mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+      material.kd = glm::vec3(color.r, color.g, color.b);
+
+      // ks
+      mat->Get(AI_MATKEY_COLOR_SPECULAR, color);
+      material.ks = glm::vec3(color.r, color.g, color.b);
+
+      // ka
+      mat->Get(AI_MATKEY_COLOR_AMBIENT, color);
+      material.ka = glm::vec3(color.r, color.g, color.b);
+
+      // shininess
+      mat->Get(AI_MATKEY_SHININESS, material.shininess);
 
       // diffuse textures
-      for (std::size_t i = 0;
-           i < material->GetTextureCount(aiTextureType_DIFFUSE); ++i) {
+      const std::filesystem::path psParent(parentPath);
+      for (std::size_t i = 0; i < mat->GetTextureCount(aiTextureType_DIFFUSE);
+           ++i) {
         aiString str;
-        material->GetTexture(aiTextureType_DIFFUSE, i, &str);
+        mat->GetTexture(aiTextureType_DIFFUSE, i, &str);
         const std::filesystem::path ps(str.C_Str());
         const std::string texturePath = (psParent / ps).native();
 
@@ -159,10 +176,10 @@ class Model {
       }
 
       // specular textures
-      for (std::size_t i = 0;
-           i < material->GetTextureCount(aiTextureType_SPECULAR); ++i) {
+      for (std::size_t i = 0; i < mat->GetTextureCount(aiTextureType_SPECULAR);
+           ++i) {
         aiString str;
-        material->GetTexture(aiTextureType_SPECULAR, i, &str);
+        mat->GetTexture(aiTextureType_SPECULAR, i, &str);
         const std::filesystem::path ps(str.C_Str());
         const std::string texturePath = (psParent / ps).native();
 
@@ -180,7 +197,7 @@ class Model {
       }
     }
 
-    return Mesh(vertices, indices, indicesOfTextures);
+    return Mesh(vertices, indices, material, indicesOfTextures);
   }
 
   std::optional<std::size_t> hasTexture(const std::string& filepath) const {
