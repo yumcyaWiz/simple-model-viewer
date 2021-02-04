@@ -168,16 +168,16 @@ class Shader {
   }
 
   void setUniformTexture(const std::string& uniformName, GLuint texture,
-                         GLuint textureUnitNumnber) const {
+                         GLuint textureUnitNumber) const {
     activate();
 
     // bind texture to specified texture unit
-    glActiveTexture(GL_TEXTURE0 + textureUnitNumnber);
+    glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
     glBindTexture(GL_TEXTURE_2D, texture);
 
     // set texture unit number on uniform variable
     const GLint location = glGetUniformLocation(program, uniformName.c_str());
-    glUniform1i(location, textureUnitNumnber);
+    glUniform1i(location, textureUnitNumber);
 
     deactivate();
   }
