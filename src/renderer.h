@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "model.h"
 #include "shader.h"
+#include "texture.h"
 
 enum class RenderMode { Position, Normal, TexCoords, UVTest };
 
@@ -21,7 +22,8 @@ class Renderer {
         normalShader{"src/shaders/shader.vert", "src/shaders/normal.frag"},
         texCoordsShader{"src/shaders/shader.vert",
                         "src/shaders/texcoords.frag"},
-        uvTestShader{"src/shaders/shader.vert", "src/shaders/uvtest.frag"} {
+        uvTestShader{"src/shaders/shader.vert", "src/shaders/uvtest.frag"},
+        testTexture("assets/uv_test.png") {
     // set view and projection matrix
     cameraBlock.view = camera.computeViewMatrix();
     cameraBlock.projection = camera.computeProjectionMatrix(width, height);
@@ -37,15 +39,7 @@ class Renderer {
     normalShader.setUBO("CameraBlock", 0);
     texCoordsShader.setUBO("CameraBlock", 0);
 
-    // setup test texture
-    glGenTextures(1, &testTexture);
-    glBindTexture(GL_TEXTURE_2D, testTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32UI, 1024, 1024, 0, GL_RGB, GL_FLOAT,
-                 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    uvTestShader.setUniformTexture("testTexture", testTexture, 0);
+    uvTestShader.setUniformTexture("testTexture", testTexture.id, 0);
   }
 
   void render() {
@@ -126,7 +120,6 @@ class Renderer {
 
   void destroy() {
     glDeleteBuffers(1, &cameraUBO);
-    glDeleteTextures(1, &testTexture);
     model.destroy();
     positionShader.destroy();
     normalShader.destroy();
@@ -149,7 +142,7 @@ class Renderer {
   GLuint cameraUBO;
   CameraBlock cameraBlock;
 
-  GLuint testTexture;
+  Texture testTexture;
 
   void updateCameraUBO() {
     glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
