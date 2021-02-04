@@ -25,7 +25,7 @@ class Texture {
   Texture(const std::string& filepath, const TextureType& textureType)
       : Texture() {
     loadImage(filepath);
-    setTextureType(textureType);
+    this->textureType = textureType;
   }
 
   void destroy() { glDeleteTextures(1, &id); }
@@ -49,8 +49,6 @@ class Texture {
 
     stbi_image_free(image);
   }
-
-  void setTextureType(const TextureType& type) { this->textureType = type; }
 };
 
 #endif

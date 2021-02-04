@@ -43,14 +43,19 @@ class Model {
     std::cout << "[Model] " << filepath << " loaded." << std::endl;
     std::cout << "[Model] number of meshes: " << meshes.size() << std::endl;
 
-    unsigned int nVertices = 0;
-    unsigned int nFaces = 0;
+    std::size_t nVertices = 0;
+    std::size_t nFaces = 0;
+    std::size_t nTextures = 0;
+    std::size_t nDiffuse = 0;
+    std::size_t nSpecular = 0;
     for (std::size_t i = 0; i < meshes.size(); ++i) {
       nVertices += meshes[i].vertices.size();
       nFaces += meshes[i].indices.size() / 3;
+      nTextures += meshes[i].textures.size();
     }
     std::cout << "[Model] number of vertices: " << nVertices << std::endl;
     std::cout << "[Model] number of faces: " << nFaces << std::endl;
+    std::cout << "[Model] number of textures: " << nTextures << std::endl;
   }
 
   // draw model by given shader
