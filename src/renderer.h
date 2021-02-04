@@ -5,7 +5,7 @@
 #include "shader.h"
 #include "texture.h"
 
-enum class RenderMode { Position, Normal, TexCoords, Diffuse };
+enum class RenderMode { Position, Normal, TexCoords, Diffuse, Specular };
 
 struct alignas(16) CameraBlock {
   alignas(64) glm::mat4 view;
@@ -22,7 +22,8 @@ class Renderer {
         normalShader{"src/shaders/shader.vert", "src/shaders/normal.frag"},
         texCoordsShader{"src/shaders/shader.vert",
                         "src/shaders/texcoords.frag"},
-        diffuseShader{"src/shaders/shader.vert", "src/shaders/diffuse.frag"} {
+        diffuseShader{"src/shaders/shader.vert", "src/shaders/diffuse.frag"},
+        specularShader{"src/shaders/shader.vert", "src/shaders/specular.frag"} {
     // set view and projection matrix
     cameraBlock.view = camera.computeViewMatrix();
     cameraBlock.projection = camera.computeProjectionMatrix(width, height);
@@ -38,6 +39,7 @@ class Renderer {
     normalShader.setUBO("CameraBlock", 0);
     texCoordsShader.setUBO("CameraBlock", 0);
     diffuseShader.setUBO("CameraBlock", 0);
+    specularShader.setUBO("CameraBlock", 0);
   }
 
   void render() {
@@ -54,6 +56,9 @@ class Renderer {
         break;
       case RenderMode::Diffuse:
         model.draw(diffuseShader);
+        break;
+      case RenderMode::Specular:
+        model.draw(specularShader);
         break;
     }
   }
@@ -125,6 +130,7 @@ class Renderer {
     normalShader.destroy();
     texCoordsShader.destroy();
     diffuseShader.destroy();
+    specularShader.destroy();
   }
 
  private:
@@ -138,6 +144,7 @@ class Renderer {
   Shader normalShader;
   Shader texCoordsShader;
   Shader diffuseShader;
+  Shader specularShader;
 
   GLuint cameraUBO;
   CameraBlock cameraBlock;
