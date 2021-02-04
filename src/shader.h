@@ -137,7 +137,7 @@ class Shader {
   void deactivate() const { glUseProgram(0); }
 
   void setUniform(const std::string& uniformName,
-                  const std::variant<GLint, GLuint, GLfloat, glm::vec2,
+                  const std::variant<bool, GLint, GLuint, GLfloat, glm::vec2,
                                      glm::vec3, glm::mat4>& value) const {
     activate();
 
@@ -149,6 +149,7 @@ class Shader {
       GLint location;
       Visitor(GLint location) : location(location) {}
 
+      void operator()(bool value) { glUniform1i(location, value); }
       void operator()(GLint value) { glUniform1i(location, value); }
       void operator()(GLuint value) { glUniform1ui(location, value); }
       void operator()(GLfloat value) { glUniform1f(location, value); }
