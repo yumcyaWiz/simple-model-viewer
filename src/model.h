@@ -26,6 +26,7 @@ class Model {
 
   operator bool() const { return meshes.size() > 0; }
 
+  // load model with assimp
   void loadModel(const std::string& filepath) {
     // load model with assimp
     Assimp::Importer importer;

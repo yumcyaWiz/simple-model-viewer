@@ -8,17 +8,17 @@
 #include "shader.h"
 #include "texture.h"
 
-struct alignas(16) Vertex {
-  alignas(16) glm::vec3 position;  // vertex position
-  alignas(16) glm::vec3 normal;    // vertex normal
-  alignas(8) glm::vec2 texcoords;  // texture coordinates
+struct Vertex {
+  glm::vec3 position;   // vertex position
+  glm::vec3 normal;     // vertex normal
+  glm::vec2 texcoords;  // texture coordinates
 };
 
-struct alignas(16) Material {
-  alignas(16) glm::vec3 kd;  // diffuse color
-  alignas(16) glm::vec3 ks;  // specular color
-  alignas(16) glm::vec3 ka;  // ambient color
-  alignas(4) float shininess;
+struct Material {
+  glm::vec3 kd;  // diffuse color
+  glm::vec3 ks;  // specular color
+  glm::vec3 ka;  // ambient color
+  float shininess;
 };
 
 class Mesh {
