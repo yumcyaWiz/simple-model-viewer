@@ -119,14 +119,6 @@ class Mesh {
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     shader.deactivate();
     glBindVertexArray(0);
-
-    // reset texture uniform
-    for (int i = 0; i < 100; ++i) {
-      std::string uniformName = "diffuseTextures[" + std::to_string(i) + "]";
-      shader.setUniformTexture(uniformName, 0, 0);
-      uniformName = "specularTextures[" + std::to_string(i) + "]";
-      shader.setUniformTexture(uniformName, 0, 0);
-    }
   }
 
  private:
