@@ -12,6 +12,7 @@ enum class TextureType {
 
 class Texture {
  public:
+  std::string filepath;
   GLuint id;
   TextureType textureType;
 
@@ -24,8 +25,9 @@ class Texture {
   }
   Texture(const std::string& filepath, const TextureType& textureType)
       : Texture() {
-    loadImage(filepath);
+    this->filepath = filepath;
     this->textureType = textureType;
+    loadImage(filepath);
   }
 
   void destroy() { glDeleteTextures(1, &id); }

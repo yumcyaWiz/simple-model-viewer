@@ -18,13 +18,46 @@ class Mesh {
  public:
   std::vector<Vertex> vertices;
   std::vector<unsigned int> indices;
-  std::vector<Texture> textures;
+  std::vector<unsigned int> indicesOfTextures;  // indices of textures
 
   Mesh(const std::vector<Vertex>& vertices,
        const std::vector<unsigned int>& indices,
-       const std::vector<Texture>& textures)
-      : vertices(vertices), indices(indices), textures(textures) {
-    setup();
+       const std::vector<unsigned int>& indicesOfTextures)
+      : vertices(vertices),
+        indices(indices),
+        indicesOfTextures(indicesOfTextures) {
+    // setup VBO, EBO, VAO
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    // VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex),
+                 vertices.data(), GL_STATIC_DRAW);
+
+    // EBO
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
+                 indices.data(), GL_STATIC_DRAW);
+
+    // position
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          reinterpret_cast<void*>(0));
+    // normal
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          reinterpret_cast<void*>(offsetof(Vertex, normal)));
+
+    // texcoords
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          reinterpret_cast<void*>(offsetof(Vertex, texcoords)));
+
+    glBindVertexArray(0);
   }
 
   void destroy() {
@@ -33,20 +66,16 @@ class Mesh {
     glDeleteVertexArrays(1, &VAO);
     vertices.clear();
     indices.clear();
-
-    for (auto& texture : textures) {
-      texture.destroy();
-    }
-    textures.clear();
+    indicesOfTextures.clear();
   }
 
   // draw mesh by given shader
-  void draw(const Shader& shader) const {
+  void draw(const Shader& shader, const std::vector<Texture>& textures) const {
     // setup textures
     std::size_t n_diffuse = 0;
     std::size_t n_specular = 0;
-    for (std::size_t i = 0; i < textures.size(); ++i) {
-      const Texture& texture = textures[i];
+    for (std::size_t i = 0; i < indicesOfTextures.size(); ++i) {
+      const Texture& texture = textures[indicesOfTextures[i]];
       const int textureUnitNumber = i;
 
       // set texture uniform
@@ -80,41 +109,6 @@ class Mesh {
   GLuint VAO;
   GLuint VBO;
   GLuint EBO;
-
-  // setup VBO, EBO, VAO
-  void setup() {
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    // VBO
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex),
-                 vertices.data(), GL_STATIC_DRAW);
-
-    // EBO
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
-                 indices.data(), GL_STATIC_DRAW);
-
-    // position
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void*>(0));
-    // normal
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void*>(offsetof(Vertex, normal)));
-
-    // texcoords
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void*>(offsetof(Vertex, texcoords)));
-
-    glBindVertexArray(0);
-  }
 };
 
 #endif

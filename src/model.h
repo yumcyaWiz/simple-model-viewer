@@ -2,6 +2,7 @@
 #define _MODEL_H
 #include <filesystem>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <vector>
 //
@@ -15,6 +16,8 @@
 #include "glm/gtc/type_ptr.hpp"
 //
 #include "mesh.h"
+#include "shader.h"
+#include "texture.h"
 
 class Model {
  public:
@@ -45,23 +48,19 @@ class Model {
 
     std::size_t nVertices = 0;
     std::size_t nFaces = 0;
-    std::size_t nTextures = 0;
-    std::size_t nDiffuse = 0;
-    std::size_t nSpecular = 0;
     for (std::size_t i = 0; i < meshes.size(); ++i) {
       nVertices += meshes[i].vertices.size();
       nFaces += meshes[i].indices.size() / 3;
-      nTextures += meshes[i].textures.size();
     }
     std::cout << "[Model] number of vertices: " << nVertices << std::endl;
     std::cout << "[Model] number of faces: " << nFaces << std::endl;
-    std::cout << "[Model] number of textures: " << nTextures << std::endl;
+    std::cout << "[Model] number of textures: " << textures.size() << std::endl;
   }
 
   // draw model by given shader
   void draw(const Shader& shader) const {
     for (std::size_t i = 0; i < meshes.size(); i++) {
-      meshes[i].draw(shader);
+      meshes[i].draw(shader, textures);
     }
   }
 
@@ -74,6 +73,7 @@ class Model {
 
  private:
   std::vector<Mesh> meshes;
+  std::vector<Texture> textures;
 
   void processNode(const aiNode* node, const aiScene* scene,
                    const std::string& parentPath) {
@@ -92,7 +92,7 @@ class Model {
                    const std::string& parentPath) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
+    std::vector<unsigned int> indicesOfTextures;
 
     // vertices
     for (std::size_t i = 0; i < mesh->mNumVertices; ++i) {
@@ -139,7 +139,17 @@ class Model {
         const std::filesystem::path ps(str.C_Str());
         const std::string texturePath = (psParent / ps).native();
 
-        textures.emplace_back(texturePath, TextureType::DIFFUSE);
+        const auto index = hasTexture(texturePath);
+        if (index) {
+          // add texture index
+          indicesOfTextures.push_back(index.value());
+        } else {
+          // add texture index
+          indicesOfTextures.push_back(textures.size());
+
+          // load texture
+          textures.emplace_back(texturePath, TextureType::DIFFUSE);
+        }
       }
 
       // specular textures
@@ -150,11 +160,31 @@ class Model {
         const std::filesystem::path ps(str.C_Str());
         const std::string texturePath = (psParent / ps).native();
 
-        textures.emplace_back(texturePath, TextureType::SPECULAR);
+        const auto index = hasTexture(texturePath);
+        if (index) {
+          // add texture index
+          indicesOfTextures.push_back(index.value());
+        } else {
+          // add texture index
+          indicesOfTextures.push_back(textures.size());
+
+          // load texture
+          textures.emplace_back(texturePath, TextureType::DIFFUSE);
+        }
       }
     }
 
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices, indices, indicesOfTextures);
+  }
+
+  std::optional<std::size_t> hasTexture(const std::string& filepath) const {
+    for (std::size_t i = 0; i < textures.size(); ++i) {
+      const Texture& texture = textures[i];
+      if (texture.filepath == filepath) {
+        return i;
+      }
+    }
+    return std::nullopt;
   }
 };
 
