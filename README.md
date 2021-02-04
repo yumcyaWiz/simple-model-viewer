@@ -33,3 +33,4 @@ make
 * [GLFW](https://github.com/glfw/glfw)
 * [assimp](https://github.com/assimp/assimp)
 * [imgui](https://github.com/ocornut/imgui)
+* [stb](https://github.com/nothings/stb)
