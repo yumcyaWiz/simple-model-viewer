@@ -1,8 +1,15 @@
 # simple-model-viewer
 
-[WIP]
+![](./sponza-albedo.jpg)
 
 simple model viewer.
+
+## Features
+
+* Position Rendering
+* Normal Rendering
+* Texture Coordinates Rendering
+* Albedo Rendering
 
 ## Requirements
 
