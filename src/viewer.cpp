@@ -65,6 +65,7 @@ int main() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);  // required for Mac
+  glfwWindowHint(GLFW_SAMPLES, 4);                      // 4x MSAA
   GLFWwindow* window =
       glfwCreateWindow(width, height, "simple-model-viewer", nullptr, nullptr);
   if (!window) {
@@ -96,6 +97,8 @@ int main() {
 
   // enable depth test
   glEnable(GL_DEPTH_TEST);
+  // enable MSAA
+  glEnable(GL_MULTISAMPLE);
 
   // setup renderer
   renderer = std::make_unique<Renderer>(width, height);
