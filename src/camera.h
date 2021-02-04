@@ -48,6 +48,16 @@ class Camera {
                             static_cast<float>(width) / height, 0.1f, 10000.0f);
   }
 
+  // initialize camera position, directions
+  void reset() {
+    camPos = glm::vec3(0.0f);
+    camForward = glm::vec3(0.0f, 0.0f, -1.0f);
+    camRight = glm::vec3(1.0f, 0.0f, 0.0f);
+    camUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    phi = 270.0f;
+    theta = 90.0f;
+  }
+
   // move camera
   void move(const CameraMovement& direction, float deltaTime) {
     const float velocity = movementSpeed * deltaTime;

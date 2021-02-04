@@ -139,6 +139,10 @@ int main() {
       renderer->setCameraLookAroundSpeed(lookAroundSpeed);
     }
 
+    if (ImGui::Button("Reset Camera")) {
+      renderer->resetCamera();
+    }
+
     ImGui::End();
 
     // handle input

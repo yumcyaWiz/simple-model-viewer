@@ -95,6 +95,8 @@ class Renderer {
     camera.movementSpeed = movementSpeed;
   }
 
+  void resetCamera() { camera.reset(); }
+
   void moveCamera(const CameraMovement& direction, float deltaTime) {
     camera.move(direction, deltaTime);
 
