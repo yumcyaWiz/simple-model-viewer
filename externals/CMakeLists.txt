@@ -24,5 +24,6 @@ target_link_libraries(imgui_glfw_opengl3 glfw)
 target_include_directories(imgui_glfw_opengl3 SYSTEM PUBLIC imgui/backends)
 
 # stb
-add_library(stb_image INTERFACE)
-target_include_directories(stb_image INTERFACE stb)
+add_library(stb INTERFACE)
+target_compile_definitions(stb INTERFACE STB_IMAGE_IMPLEMENTATION)
+target_include_directories(stb SYSTEM INTERFACE stb)

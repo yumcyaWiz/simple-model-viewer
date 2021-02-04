@@ -40,7 +40,7 @@ target_link_libraries(viewer PRIVATE imgui)
 target_link_libraries(viewer PRIVATE imgui_glfw_opengl3)
 
 # stb
-target_link_libraries(viewer PRIVATE stb_image)
+target_link_libraries(viewer PRIVATE stb)
 
 # copy shaders to build
 add_custom_command(TARGET viewer POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/shaders $<TARGET_FILE_DIR:viewer>/shaders COMMENT "copying shaders" VERBATIM)
