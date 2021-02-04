@@ -69,8 +69,8 @@ class Model {
       mesh.destroy();
     }
     meshes.clear();
-    
-    for(auto& texture : textures) {
+
+    for (auto& texture : textures) {
       texture.destroy();
     }
     textures.clear();

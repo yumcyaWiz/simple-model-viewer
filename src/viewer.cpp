@@ -100,9 +100,6 @@ int main() {
   // setup renderer
   renderer = std::make_unique<Renderer>(width, height);
 
-  // load model
-  renderer->loadModel("assets/sponza/sponza.obj");
-
   // app loop
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
@@ -114,6 +111,12 @@ int main() {
 
     // imgui
     ImGui::Begin("viewer");
+
+    static char modelFilepath[100] = {"assets/sponza/sponza.obj"};
+    ImGui::InputText("Model", modelFilepath, 100);
+    if (ImGui::Button("Load Model")) {
+      renderer->loadModel(modelFilepath);
+    }
 
     static RenderMode renderMode = renderer->getRenderMode();
     if (ImGui::Combo("Render Mode", reinterpret_cast<int*>(&renderMode),
