@@ -10,3 +10,6 @@
 [submodule "externals/stb"]
 	path = externals/stb
 	url = git@github.com:nothings/stb.git
+[submodule "externals/assimp"]
+	path = externals/assimp
+	url = git@github.com:assimp/assimp.git
