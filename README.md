@@ -17,7 +17,6 @@ simple model viewer.
 * C++17
 * CMake 3.12 or Higher
 * OpenGL 3.3
-* [assimp](https://github.com/assimp/assimp)
 
 ## Setup
 
