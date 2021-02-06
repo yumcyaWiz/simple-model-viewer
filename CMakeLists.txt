@@ -30,8 +30,7 @@ target_link_libraries(viewer PRIVATE glfw)
 target_link_libraries(viewer PRIVATE glm)
 
 # assimp
-find_package(ASSIMP REQUIRED)
-target_link_libraries(viewer PRIVATE assimp)
+target_link_libraries(viewer PRIVATE assimp::assimp)
 
 # imgui
 target_link_libraries(viewer PRIVATE imgui)
